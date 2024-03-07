@@ -17,13 +17,9 @@ const pool = new Pool({
   port: process.env.PGPORT,
 });
 
-app.get("/api/recipes/:id", async (req, res) => {
+app.get("/api/recipes", async (req, res) => {
   try {
-    let query = "SELECT * FROM recipes";
-    if (req.params?.id) {
-      query += ` WHERE id=${req.params.id}`;
-    }
-    console.info("query", query);
+    const query = "SELECT * FROM recipes";
     const data = await pool.query(query);
     res.send(data.rows);
   } catch (err) {
@@ -31,7 +27,19 @@ app.get("/api/recipes/:id", async (req, res) => {
     res.sendStatus(500);
   }
 });
-
+app.get("/api/recipes/:id", async (req, res) => {
+  try {
+    let query = "SELECT * FROM recipes";
+    if (req.params?.id) {
+      query += ` WHERE id=${req.params.id}`;
+    }
+    const data = await pool.query(query);
+    res.send(data.rows);
+  } catch (err) {
+    console.log(err.message);
+    res.sendStatus(500);
+  }
+});
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
