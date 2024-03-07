@@ -17,9 +17,14 @@ const pool = new Pool({
   port: process.env.PGPORT,
 });
 
-app.get("/API/recipes", async (req, res) => {
+app.get("/api/recipes/:id", async (req, res) => {
   try {
-    const data = await pool.query("SELECT * FROM recipes");
+    let query = "SELECT * FROM recipes";
+    if (req.params?.id) {
+      query += ` WHERE id=${req.params.id}`;
+    }
+    console.info("query", query);
+    const data = await pool.query(query);
     res.send(data.rows);
   } catch (err) {
     console.log(err.message);
